@@ -63,7 +63,7 @@ func (a *Application) FetchAccessToken(code string, redirectURI string) (accessT
 	formData.Set("grant_type", "authorization_code")
 	formData.Set("code", code)
 	formData.Set("redirect_uri", redirectURI)
-	req, err := http.NewRequest("POST", BaseDiscordAPIURL+"/api/oauth2/token", strings.NewReader(formData.Encode()))
+	req, err := http.NewRequest("POST", BaseDiscordAPIURL+"/oauth2/token", strings.NewReader(formData.Encode()))
 	if err != nil {
 		err = fmt.Errorf("error forming request: %w", err)
 		return
