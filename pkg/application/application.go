@@ -29,6 +29,57 @@ func NewApplication(token string, secret string) (*Application, error) {
 	return &Application{Bot: bot, Secret: secret}, nil
 }
 
+var ScopeIdentify = "identify"
+var ScopeEmail = "email"
+var ScopeConnections = "connections"
+var ScopeGuildsMembersRead = "guilds.members.read"
+var ScopeRpcNotificationsRead = "rpc.notifications.read"
+var ScopeRpcVideoRead = "rpc.video.read"
+var ScopeRpcScreenshareWrite = "rpc.screenshare.write"
+var ScopeWebhookIncoming = "webhook.incoming"
+var ScopeApplicationsBuildsRead = "applications.builds.read"
+var ScopeApplicationsEntitlements = "applications.entitlements"
+var ScopeRelationshipsRead = "relationships.read"
+var ScopeRoleConnectionsWrite = "role_connections.write"
+var ScopeDmChannelsRead = "dm_channels.read"
+var ScopeActivitiesWrite = "activities.write"
+var ScopeApplicationsStoreUpdate = "applications.store.update"
+var ScopeApplicationsBuildsUpload = "applications.builds.upload"
+var ScopeRpcScreenshareRead = "rpc.screenshare.read"
+var ScopeRpcVoiceWrite = "rpc.voice.write"
+var ScopeRpcGuildsJoin = "rpc.guilds.join"
+var ScopeGuilds = "guilds"
+var ScopeGdmJoin = "gdm.join"
+var ScopeRpcVoiceRead = "rpc.voice.read"
+var ScopeRpcVideoWrite = "rpc.video.write"
+var ScopeRpcActivitiesWrite = "rpc.activities.write"
+var ScopeMessagesRead = "messages.read"
+var ScopeApplicationsCommands = "applications.commands"
+var ScopeActivitiesRead = "activities.read"
+var ScopeVoice = "voice"
+var ScopeApplicationsCommandsPermissionsUpdate = "applications.commands.permissions.update"
+
+// CreateAuthorizationLink creates an authorization link. State can be "" for no state. Scope can be nil for no scopes.
+//
+// The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
+func (a *Application) CreateAuthorizationLink(redirectURI string, state string, scopes []string) string {
+	scopesStr := ""
+	if scopes != nil {
+		scopesStr = strings.Join(scopes, "+")
+	}
+	link := BASE_DISCORD_API_URL + "/oauth2/authorize"
+	link += "?client_id=" + a.Bot.Application.ID
+	if scopesStr != "" {
+		link += "&scope=" + scopesStr
+	}
+	link += "&response_type=code"
+	link += "&redirect_uri=" + url.QueryEscape(redirectURI)
+	if state != "" {
+		link += "&state=" + state
+	}
+	return link
+}
+
 // RefreshAccessToken exchanges the passed refresh token for a new access token & refresh token.
 // Expires in represents the seconds until the token expires.
 //
