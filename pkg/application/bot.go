@@ -167,3 +167,43 @@ func (b *Bot) FetchGuildMember(guildID string, memberID string) (*models.Member,
 	}
 	return &member, nil
 }
+
+// AddMemberToGuild joins the user with the passed user ID to the guild with the passed guild ID using the access token.
+//
+// Possible Errors:
+//   - ErrUnauthorized: Returned if the bot's token is invalid.
+//   - UnexpectedResponseError: Returned if an unexpected response was received.
+//   - ErrAlreadyInGuild: Returned if the user is already in the guild.
+//   - ErrMaxServers: Returned if the user is in max servers.
+//   - ErrGuildNotFound: Returned if the bot is not in the guild.
+//   - ErrInvalidAccessToken: Returned if the access token is invalid.
+func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string) error {
+	body := fmt.Sprintf(`{
+		"access_token": "%s"
+	}`, accessToken)
+	req, err := http.NewRequest("PUT", BASE_DISCORD_API_URL+"/guilds/"+guildID+"/member/"+userID, strings.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("error forming request: %w", err)
+	}
+	resp, err := b.Request(req, nil)
+	if err != nil {
+		return fmt.Errorf("error making request: %w", err)
+	}
+	if resp.Status != http.StatusOK {
+		if resp.Status == http.StatusNoContent {
+			return ErrAlreadyInGuild
+		}
+		if resp.Status == http.StatusBadRequest {
+			return ErrMaxServers
+		}
+		if resp.Status == http.StatusForbidden {
+			_, err = b.FetchGuildPreview(guildID)
+			if err != nil {
+				return ErrGuildNotFound
+			}
+			return ErrInvalidAccessToken
+		}
+		return &UnexpectedResponseError{resp}
+	}
+	return nil
+}
