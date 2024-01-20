@@ -1,6 +1,6 @@
 # ⚡ Gocord
 
-A minimalistic package that allows the user to interact with the Discord API using a Discord Application/Bot.
+A simplistic & efficient wrapper for the Discord API. This package mostly focuses on the OAuth2 endpoints.
 
 ## 🦺 Tests
 
