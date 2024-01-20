@@ -63,14 +63,10 @@ var ScopeApplicationsCommandsPermissionsUpdate = "applications.commands.permissi
 //
 // The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
 func (a *Application) CreateAuthorizationLink(redirectURI string, state string, scopes []string) string {
-	scopesStr := ""
-	if scopes != nil {
-		scopesStr = strings.Join(scopes, "+")
-	}
 	link := BASE_DISCORD_API_URL + "/oauth2/authorize"
 	link += "?client_id=" + a.Bot.Application.ID
-	if scopesStr != "" {
-		link += "&scope=" + scopesStr
+	if scopes != nil {
+		link += "&scope=" + strings.Join(scopes, "+")
 	}
 	link += "&response_type=code"
 	link += "&redirect_uri=" + url.QueryEscape(redirectURI)
