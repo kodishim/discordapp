@@ -64,7 +64,7 @@ var ScopeApplicationsCommandsPermissionsUpdate = "applications.commands.permissi
 //
 // The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
 func (a *Application) CreateAuthLink(redirectURI string, state string, scopes []string) string {
-	link := BASE_DISCORD_API_URL + "/oauth2/authorize"
+	link := BaseDiscordAPIURL + "/oauth2/authorize"
 	link += "?client_id=" + a.Bot.Application.ID
 	if scopes != nil {
 		link += "&scope=" + strings.Join(scopes, "+")
@@ -93,7 +93,7 @@ func (a *Application) FetchAccessToken(code string, redirectURI string) (accessT
 	formData.Set("grant_type", "authorization_code")
 	formData.Set("code", code)
 	formData.Set("redirect_uri", redirectURI)
-	req, err := http.NewRequest("POST", BASE_DISCORD_API_URL+"/api/oauth2/token", strings.NewReader(formData.Encode()))
+	req, err := http.NewRequest("POST", BaseDiscordAPIURL+"/api/oauth2/token", strings.NewReader(formData.Encode()))
 	if err != nil {
 		err = fmt.Errorf("error forming request: %w", err)
 		return
@@ -136,7 +136,7 @@ func (a *Application) RefreshAccessToken(refreshToken string) (newAccessToken st
 	formData.Set("client_secret", a.Secret)
 	formData.Set("grant_type", "refresh_token")
 	formData.Set("refresh_token", refreshToken)
-	req, err := http.NewRequest(http.MethodPost, BASE_DISCORD_API_URL+"/oauth2/token", strings.NewReader(formData.Encode()))
+	req, err := http.NewRequest(http.MethodPost, BaseDiscordAPIURL+"/oauth2/token", strings.NewReader(formData.Encode()))
 	if err != nil {
 		err = fmt.Errorf("error forming request: %w", err)
 		return

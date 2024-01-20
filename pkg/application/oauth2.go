@@ -14,7 +14,7 @@ import (
 //   - ErrInvalidAccessToken: Returned if the access token is invalid.
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
 func FetchAuthInfo(accessToken string) (*models.AuthInfo, error) {
-	req, err := http.NewRequest(http.MethodGet, BASE_DISCORD_API_URL+"/oauth2/@me", nil)
+	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/oauth2/@me", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
@@ -39,7 +39,7 @@ func FetchAuthInfo(accessToken string) (*models.AuthInfo, error) {
 //   - ErrInvalidAccessToken: Returned if the access token is invalid.
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
 func FetchAuthUser(accessToken string) (*models.AuthorizedUser, error) {
-	req, err := http.NewRequest(http.MethodGet, BASE_DISCORD_API_URL+"/users/@me", nil)
+	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/users/@me", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
