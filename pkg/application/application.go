@@ -30,36 +30,6 @@ func NewApplication(token string, secret string) (*Application, error) {
 	return &Application{Bot: bot, Secret: secret}, nil
 }
 
-var ScopeIdentify = "identify"
-var ScopeEmail = "email"
-var ScopeConnections = "connections"
-var ScopeGuildsMembersRead = "guilds.members.read"
-var ScopeRpcNotificationsRead = "rpc.notifications.read"
-var ScopeRpcVideoRead = "rpc.video.read"
-var ScopeRpcScreenshareWrite = "rpc.screenshare.write"
-var ScopeWebhookIncoming = "webhook.incoming"
-var ScopeApplicationsBuildsRead = "applications.builds.read"
-var ScopeApplicationsEntitlements = "applications.entitlements"
-var ScopeRelationshipsRead = "relationships.read"
-var ScopeRoleConnectionsWrite = "role_connections.write"
-var ScopeDmChannelsRead = "dm_channels.read"
-var ScopeActivitiesWrite = "activities.write"
-var ScopeApplicationsStoreUpdate = "applications.store.update"
-var ScopeApplicationsBuildsUpload = "applications.builds.upload"
-var ScopeRpcScreenshareRead = "rpc.screenshare.read"
-var ScopeRpcVoiceWrite = "rpc.voice.write"
-var ScopeRpcGuildsJoin = "rpc.guilds.join"
-var ScopeGuilds = "guilds"
-var ScopeGdmJoin = "gdm.join"
-var ScopeRpcVoiceRead = "rpc.voice.read"
-var ScopeRpcVideoWrite = "rpc.video.write"
-var ScopeRpcActivitiesWrite = "rpc.activities.write"
-var ScopeMessagesRead = "messages.read"
-var ScopeApplicationsCommands = "applications.commands"
-var ScopeActivitiesRead = "activities.read"
-var ScopeVoice = "voice"
-var ScopeApplicationsCommandsPermissionsUpdate = "applications.commands.permissions.update"
-
 // CreateAuthLink creates an authorization link. State can be "" for no state. Scope can be nil for no scopes.
 //
 // The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
