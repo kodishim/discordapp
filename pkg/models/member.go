@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type User struct {
+type MemberUser struct {
 	ID                   string            `json:"id"`
 	Username             string            `json:"username"`
 	Avatar               string            `json:"avatar"`
@@ -18,16 +18,16 @@ type User struct {
 }
 
 type Member struct {
-	Avatar                     string    `json:"avatar"`
-	CommunicationDisabledUntil time.Time `json:"communication_disabled_until"`
-	Flags                      int       `json:"flags"`
-	JoinedAt                   time.Time `json:"joined_at"`
-	Nick                       string    `json:"nick"`
-	Pending                    bool      `json:"pending"`
-	PremiumSince               time.Time `json:"premium_since"`
-	Roles                      []string  `json:"roles"`
-	UnusualDmActivityUntil     time.Time `json:"unusual_dm_activity_until"`
-	User                       User      `json:"user"`
-	Mute                       bool      `json:"mute"`
-	Deaf                       bool      `json:"deaf"`
+	Avatar                     string     `json:"avatar"`
+	CommunicationDisabledUntil time.Time  `json:"communication_disabled_until"`
+	Flags                      int        `json:"flags"`
+	JoinedAt                   time.Time  `json:"joined_at"`
+	Nick                       string     `json:"nick"`
+	Pending                    bool       `json:"pending"`
+	PremiumSince               time.Time  `json:"premium_since"`
+	Roles                      []string   `json:"roles"`
+	UnusualDmActivityUntil     time.Time  `json:"unusual_dm_activity_until"`
+	User                       MemberUser `json:"user"`
+	Mute                       bool       `json:"mute"`
+	Deaf                       bool       `json:"deaf"`
 }
