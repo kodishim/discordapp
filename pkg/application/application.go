@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"example.com/pkg/util"
+	"github.com/kodishim/gocord/pkg/util"
 )
 
 // An application represents a Discord application.

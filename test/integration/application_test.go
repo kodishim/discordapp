@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"example.com/pkg/application"
+	"github.com/kodishim/gocord/pkg/application"
 )
 
 func TestNewApplication(t *testing.T) {

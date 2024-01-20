@@ -1,4 +1,4 @@
-module example.com
+module github.com/kodishim/gocord
 
 go 1.21.4
 

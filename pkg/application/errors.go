@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"example.com/pkg/util"
+	"github.com/kodishim/gocord/pkg/util"
 )
 
 var ErrGuildNotFound = errors.New("guild_not_found")

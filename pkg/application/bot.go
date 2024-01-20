@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"example.com/pkg/models"
-	"example.com/pkg/util"
+	"github.com/kodishim/gocord/pkg/models"
+	"github.com/kodishim/gocord/pkg/util"
 )
 
 // A bot represents a Discord bot.
