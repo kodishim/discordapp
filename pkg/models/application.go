@@ -6,11 +6,11 @@ type Application struct {
 	CoverImage          string `json:"cover_image"`
 	Description         string `json:"description"`
 	GuildID             string `json:"guild_id"`
-	Icon                any    `json:"icon"`
+	Icon                string `json:"icon"`
 	ID                  string `json:"id"`
 	Name                string `json:"name"`
 	Owner               struct {
-		Avatar        any    `json:"avatar"`
+		Avatar        string `json:"avatar"`
 		Discriminator string `json:"discriminator"`
 		Flags         int    `json:"flags"`
 		ID            string `json:"id"`
