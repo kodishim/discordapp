@@ -92,7 +92,7 @@ func (b *Bot) FetchApplication() (*models.Application, error) {
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
 //   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
 func (b *Bot) FetchGuildPreview(guildID string) (*models.GuildPreview, error) {
-	req, err := http.NewRequest("GET", BASE_DISCORD_API_URL+"/guilds/"+guildID+"/preview", nil)
+	req, err := http.NewRequest(http.MethodGet, BASE_DISCORD_API_URL+"/guilds/"+guildID+"/preview", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
@@ -117,7 +117,7 @@ func (b *Bot) FetchGuildPreview(guildID string) (*models.GuildPreview, error) {
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
 //   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
 func (b *Bot) FetchGuild(guildID string) (*models.Guild, error) {
-	req, err := http.NewRequest("GET", BASE_DISCORD_API_URL+"/guilds/"+guildID, nil)
+	req, err := http.NewRequest(http.MethodGet, BASE_DISCORD_API_URL+"/guilds/"+guildID, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
@@ -143,7 +143,7 @@ func (b *Bot) FetchGuild(guildID string) (*models.Guild, error) {
 //   - ErrUserNotFound: Returned if a user with the passed member ID could not be found in the guild.
 //   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
 func (b *Bot) FetchGuildMember(guildID string, memberID string) (*models.Member, error) {
-	req, err := http.NewRequest("GET", BASE_DISCORD_API_URL+"/guilds/"+guildID+"/members/"+memberID, nil)
+	req, err := http.NewRequest(http.MethodGet, BASE_DISCORD_API_URL+"/guilds/"+guildID+"/members/"+memberID, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
@@ -181,7 +181,7 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 	body := fmt.Sprintf(`{
 		"access_token": "%s"
 	}`, accessToken)
-	req, err := http.NewRequest("PUT", BASE_DISCORD_API_URL+"/guilds/"+guildID+"/member/"+userID, strings.NewReader(body))
+	req, err := http.NewRequest(http.MethodPut, BASE_DISCORD_API_URL+"/guilds/"+guildID+"/member/"+userID, strings.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("error forming request: %w", err)
 	}

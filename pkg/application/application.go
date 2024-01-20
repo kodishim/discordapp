@@ -59,10 +59,10 @@ var ScopeActivitiesRead = "activities.read"
 var ScopeVoice = "voice"
 var ScopeApplicationsCommandsPermissionsUpdate = "applications.commands.permissions.update"
 
-// CreateAuthorizationLink creates an authorization link. State can be "" for no state. Scope can be nil for no scopes.
+// CreateAuthLink creates an authorization link. State can be "" for no state. Scope can be nil for no scopes.
 //
 // The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
-func (a *Application) CreateAuthorizationLink(redirectURI string, state string, scopes []string) string {
+func (a *Application) CreateAuthLink(redirectURI string, state string, scopes []string) string {
 	link := BASE_DISCORD_API_URL + "/oauth2/authorize"
 	link += "?client_id=" + a.Bot.Application.ID
 	if scopes != nil {
@@ -88,7 +88,7 @@ func (a *Application) RefreshAccessToken(refreshToken string) (newAccessToken st
 	formData.Set("client_secret", a.Secret)
 	formData.Set("grant_type", "refresh_token")
 	formData.Set("refresh_token", refreshToken)
-	req, err := http.NewRequest("POST", BASE_DISCORD_API_URL+"/oauth2/token", strings.NewReader(formData.Encode()))
+	req, err := http.NewRequest(http.MethodPost, BASE_DISCORD_API_URL+"/oauth2/token", strings.NewReader(formData.Encode()))
 	if err != nil {
 		err = fmt.Errorf("error forming request: %w", err)
 		return
