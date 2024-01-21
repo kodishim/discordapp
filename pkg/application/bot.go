@@ -181,7 +181,7 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 	body := fmt.Sprintf(`{
 		"access_token": "%s"
 	}`, accessToken)
-	req, err := http.NewRequest(http.MethodPut, BaseDiscordAPIURL+"/guilds/"+guildID+"/member/"+userID, strings.NewReader(body))
+	req, err := http.NewRequest(http.MethodPut, BaseDiscordAPIURL+"/guilds/"+guildID+"/members/"+userID, strings.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("error forming request: %w", err)
 	}
