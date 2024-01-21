@@ -49,7 +49,7 @@ func FetchAuthUser(accessToken string) (*models.AuthorizedUser, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %w", err)
 	}
-	if resp.Status != http.StatusOK {
+	if resp.Status != http.StatusCreated {
 		if resp.Status == http.StatusUnauthorized {
 			return nil, ErrInvalidAccessToken
 		}
