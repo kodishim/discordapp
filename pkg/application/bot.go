@@ -196,6 +196,9 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 		if resp.Status == http.StatusBadRequest {
 			return ErrMaxServers
 		}
+		if resp.Status == http.StatusNotFound {
+			return ErrGuildNotFound
+		}
 		if resp.Status == http.StatusForbidden {
 			_, err = b.FetchGuildPreview(guildID)
 			if err != nil {
