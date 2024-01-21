@@ -17,6 +17,12 @@ type Response struct {
 //
 // If unmarshalTo is nil the response will not be unmarshaled.
 func MakeRequest(req *http.Request, client *http.Client, unmarshalTo any) (*Response, error) {
+	if req.Header == nil {
+		req.Header = http.Header{}
+	}
+	if req.Header.Get("Content-Type") == "" {
+		req.Header.Set("Content-Type", "application/json")
+	}
 	if client == nil {
 		client = http.DefaultClient
 	}
