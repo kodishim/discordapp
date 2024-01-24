@@ -189,7 +189,7 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 	if err != nil {
 		return fmt.Errorf("error making request: %w", err)
 	}
-	if resp.Status != http.StatusOK {
+	if resp.Status != http.StatusCreated {
 		if resp.Status == http.StatusNoContent {
 			return ErrAlreadyInGuild
 		}
