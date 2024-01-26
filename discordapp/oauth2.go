@@ -1,11 +1,11 @@
-package application
+package discordapp
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/kodishim/gocord/pkg/models"
-	"github.com/kodishim/gocord/pkg/util"
+	"github.com/kodishim/discordapp/discordapp/models"
+	"github.com/kodishim/discordapp/discordapp/util"
 )
 
 // FetchAuthInfo fetches the authorization info using the passed access token.

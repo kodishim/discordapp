@@ -1,4 +1,4 @@
-module github.com/kodishim/gocord
+module github.com/kodishim/discordapp
 
 go 1.21.4
 

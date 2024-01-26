@@ -1,4 +1,4 @@
-package application
+package discordapp
 
 import (
 	"encoding/base64"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/kodishim/gocord/pkg/util"
+	"github.com/kodishim/discordapp/discordapp/util"
 )
 
 // An application represents a Discord application.

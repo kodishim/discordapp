@@ -1,4 +1,4 @@
-package application
+package discordapp
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/kodishim/gocord/pkg/models"
-	"github.com/kodishim/gocord/pkg/util"
+	"github.com/kodishim/discordapp/discordapp/models"
+	"github.com/kodishim/discordapp/discordapp/util"
 )
 
 // A bot represents a Discord bot.

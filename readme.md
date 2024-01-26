@@ -1,6 +1,6 @@
-# ⚡ Gocord
+# ⚡ Discordapp
 
-A simplistic & efficient wrapper for the Discord API. This package mostly focuses on the OAuth2 endpoints.
+A simplistic wrapper for the Discord Application API.
 
 ## 🦺 Tests
 

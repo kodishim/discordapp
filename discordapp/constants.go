@@ -1,4 +1,4 @@
-package application
+package discordapp
 
 // Constants
 const BaseDiscordAPIURL = "https://discord.com/api"

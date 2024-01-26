@@ -4,18 +4,18 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kodishim/gocord/pkg/application"
+	"github.com/kodishim/discordapp/discordapp"
 )
 
 func TestNewBot(t *testing.T) {
-	_, err := application.NewBot(os.Getenv("TEST_TOKEN"))
+	_, err := discordapp.NewBot(os.Getenv("TEST_TOKEN"))
 	if err != nil {
 		t.Fatalf("Error creating new bot: %s", err)
 	}
 }
 
 func TestFetchApplication(t *testing.T) {
-	bot, err := application.NewBot(os.Getenv("TEST_TOKEN"))
+	bot, err := discordapp.NewBot(os.Getenv("TEST_TOKEN"))
 	if err != nil {
 		t.Fatalf("Error creating new bot: %s", err)
 	}
@@ -26,7 +26,7 @@ func TestFetchApplication(t *testing.T) {
 }
 
 func TestFetchGuildPreview(t *testing.T) {
-	bot, err := application.NewBot(os.Getenv("TEST_TOKEN"))
+	bot, err := discordapp.NewBot(os.Getenv("TEST_TOKEN"))
 	if err != nil {
 		t.Fatalf("Error creating new bot: %s", err)
 	}
@@ -37,7 +37,7 @@ func TestFetchGuildPreview(t *testing.T) {
 }
 
 func TestFetchGuildMember(t *testing.T) {
-	bot, err := application.NewBot(os.Getenv("TEST_TOKEN"))
+	bot, err := discordapp.NewBot(os.Getenv("TEST_TOKEN"))
 	if err != nil {
 		t.Fatalf("Error creating new bot: %s", err)
 	}

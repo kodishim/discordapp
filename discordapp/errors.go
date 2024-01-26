@@ -1,10 +1,10 @@
-package application
+package discordapp
 
 import (
 	"errors"
 	"fmt"
 
-	"github.com/kodishim/gocord/pkg/util"
+	"github.com/kodishim/discordapp/discordapp/util"
 )
 
 var ErrGuildNotFound = errors.New("guild_not_found")
