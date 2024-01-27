@@ -99,6 +99,7 @@ func (a *Application) FetchAccessToken(code string, redirectURI string) (accessT
 //
 // Possible Errors:
 //   - ErrUnauthorized: Returned if authentication failed.
+//   - ErrInvalidAccessToken: Returned if access token is invalid.
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
 func (a *Application) RefreshAccessToken(refreshToken string) (newAccessToken string, newRefreshToken string, expiresIn int, err error) {
 	formData := url.Values{}
@@ -125,6 +126,10 @@ func (a *Application) RefreshAccessToken(refreshToken string) (newAccessToken st
 	if resp.Status != http.StatusOK {
 		if resp.Status == http.StatusUnauthorized {
 			err = ErrUnauthorized
+			return
+		}
+		if resp.Status == http.StatusBadRequest {
+			err = ErrInvalidAccessToken
 			return
 		}
 		err = &UnexpectedResponseError{resp}
