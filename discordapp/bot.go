@@ -204,7 +204,10 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 			if err != nil {
 				return ErrGuildNotFound
 			}
-			return ErrInvalidAccessToken
+			if strings.Contains(string(resp.Body), `"code": 50025`) {
+				return ErrInvalidAccessToken
+			}
+			// If neither we return unexpected response.
 		}
 		return &UnexpectedResponseError{resp}
 	}
