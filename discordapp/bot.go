@@ -103,7 +103,10 @@ func (b *Bot) FetchGuildPreview(guildID string) (*models.GuildPreview, error) {
 	}
 	if resp.Status != http.StatusOK {
 		if resp.Status == http.StatusNotFound {
-			return nil, ErrGuildNotFound
+			if strings.Contains(string(resp.Body), `"code": 10004`) {
+				return nil, ErrGuildNotFound
+			}
+			// Otherwise we return an unexpected error
 		}
 		return nil, &UnexpectedResponseError{response: resp}
 	}
@@ -128,7 +131,10 @@ func (b *Bot) FetchGuild(guildID string) (*models.Guild, error) {
 	}
 	if resp.Status != http.StatusOK {
 		if resp.Status == http.StatusNotFound {
-			return nil, ErrGuildNotFound
+			if strings.Contains(string(resp.Body), `"code": 10004`) {
+				return nil, ErrGuildNotFound
+			}
+			// Otherwise we return an unexpected error
 		}
 		return nil, &UnexpectedResponseError{response: resp}
 	}
