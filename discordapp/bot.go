@@ -183,6 +183,7 @@ func (b *Bot) FetchGuildMember(guildID string, memberID string) (*models.Member,
 //   - ErrMaxServers: Returned if the user is in max servers.
 //   - ErrGuildNotFound: Returned if the bot is not in the guild.
 //   - ErrInvalidAccessToken: Returned if the access token is invalid.
+//   - ErrUserNotFound: Returned if a user with the passed member ID could not be found in the guild.
 func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string) error {
 	body := fmt.Sprintf(`{
 		"access_token": "%s"
@@ -203,6 +204,9 @@ func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string
 			return ErrMaxServers
 		}
 		if resp.Status == http.StatusNotFound {
+			if strings.Contains(string(resp.Body), "Unknown User") {
+				return ErrUserNotFound
+			}
 			return ErrGuildNotFound
 		}
 		if resp.Status == http.StatusForbidden {
