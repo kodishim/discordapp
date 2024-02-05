@@ -30,23 +30,6 @@ func NewApplication(token string, secret string) (*Application, error) {
 	return &Application{Bot: bot, Secret: secret}, nil
 }
 
-// CreateAuthLink creates an authorization link. State can be "" for no state. Scope can be nil for no scopes.
-//
-// The redirectURI must be configured on the Discord application at https://discord.com/developers/applications.
-func (a *Application) CreateAuthLink(redirectURI string, state string, scopes []string) string {
-	link := BaseDiscordAPIURL + "/oauth2/authorize"
-	link += "?client_id=" + a.Bot.Application.ID
-	if scopes != nil {
-		link += "&scope=" + strings.Join(scopes, "+")
-	}
-	link += "&response_type=code"
-	link += "&redirect_uri=" + url.QueryEscape(redirectURI)
-	if state != "" {
-		link += "&state=" + state
-	}
-	return link
-}
-
 // FetchAccessToken fetches an access & refresh token using the passed code.
 //
 // A code can be found in the payload of a Discord callback request during the OAuth2 process.

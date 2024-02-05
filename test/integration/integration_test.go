@@ -17,7 +17,7 @@ func init() {
 			log.Fatalf("%s env variable is missing", variableName)
 		}
 	}
-	variablesToCheck := []string{"TEST_TOKEN", "TEST_SECRET", "TEST_GUILD", "TEST_MEMBER"}
+	variablesToCheck := []string{"TOKEN", "SECRET", "GUILD", "MEMBER", "ACCESS_TOKEN", "AUTHORIZED_USER"}
 	for _, v := range variablesToCheck {
 		checkVariable(v)
 	}

@@ -4,16 +4,58 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/kodishim/discordapp/discordapp/models"
 	"github.com/kodishim/discordapp/discordapp/util"
 )
 
 // A bot represents a Discord bot.
 type Bot struct {
 	Token       string
-	Application *models.Application
+	Application *ApplicationInfo
+}
+
+// ApplicationInfo represents an application object returned by Discord's API
+type ApplicationInfo struct {
+	BotPublic           bool   `json:"bot_public"`
+	BotRequireCodeGrant bool   `json:"bot_require_code_grant"`
+	CoverImage          string `json:"cover_image"`
+	Description         string `json:"description"`
+	GuildID             string `json:"guild_id"`
+	Icon                string `json:"icon"`
+	ID                  string `json:"id"`
+	Name                string `json:"name"`
+	Owner               struct {
+		Avatar        string `json:"avatar"`
+		Discriminator string `json:"discriminator"`
+		Flags         int    `json:"flags"`
+		ID            string `json:"id"`
+		Username      string `json:"username"`
+	} `json:"owner"`
+	PrimarySkuID string `json:"primary_sku_id"`
+	Slug         string `json:"slug"`
+	Summary      string `json:"summary"`
+	Team         struct {
+		Icon    string `json:"icon"`
+		ID      string `json:"id"`
+		Members []struct {
+			MembershipState int      `json:"membership_state"`
+			Permissions     []string `json:"permissions"`
+			TeamID          string   `json:"team_id"`
+			User            struct {
+				Avatar        string `json:"avatar"`
+				Discriminator string `json:"discriminator"`
+				ID            string `json:"id"`
+				Username      string `json:"username"`
+			} `json:"user"`
+		} `json:"members"`
+	} `json:"team"`
+	VerifyKey string `json:"verify_key"`
+}
+
+// DiscordErrorResponse represents an error response returned by the Discord API.
+type DiscordErrorResponse struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
 }
 
 // NewBot creates & returns a pointer to a bot using the passed token.
@@ -28,7 +70,7 @@ func NewBot(token string) (*Bot, error) {
 		Application: nil,
 	}
 	var err error
-	bot.Application, err = bot.FetchApplication()
+	bot.Application, err = bot.FetchApplicationInfo()
 	if err != nil {
 		return nil, fmt.Errorf("error fetching bot's application object: %w", err)
 	}
@@ -39,8 +81,12 @@ func NewBot(token string) (*Bot, error) {
 //
 // unmarshalTo should be a pointer or nil.
 //
+// If a response with status code less than 200 or greater than 299 is received an error is returned.
+//
 // Possible Errors:
-//   - ErrUnauthorized - Returned if the bot's token is invalid.
+//   - ErrUnauthorized: Returned if the bot's token is invalid.
+//   - DiscordError: Returned if a non-200 response is received & there is an error code in the body.
+//   - UnexpectedResponseError: Returned if a non-200 response is received without a code in the body.
 func (b *Bot) Request(req *http.Request, unmarshalTo any) (*util.Response, error) {
 	if req.Header == nil {
 		req.Header = http.Header{}
@@ -50,8 +96,23 @@ func (b *Bot) Request(req *http.Request, unmarshalTo any) (*util.Response, error
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %w", err)
 	}
-	if resp.Status == http.StatusUnauthorized {
-		return nil, ErrUnauthorized
+	if resp.Status < 200 || resp.Status > 299 {
+		if resp.Status == http.StatusUnauthorized {
+			return nil, ErrUnauthorized
+		}
+		var discordErrorResp struct {
+			Message string `json:"mesage"`
+			Code    *int   `json:"code"`
+		}
+		err = json.Unmarshal(resp.Body, &discordErrorResp)
+		if err != nil || discordErrorResp.Code == nil {
+			return nil, &UnexpectedResponseError{resp}
+		}
+		return nil, &DiscordError{
+			response: resp,
+			code:     *discordErrorResp.Code,
+			message:  discordErrorResp.Message,
+		}
 	}
 	return resp, nil
 }
@@ -63,12 +124,12 @@ func (b *Bot) Request(req *http.Request, unmarshalTo any) (*util.Response, error
 // Possible Errors:
 //   - ErrUnauthorized: Returned if the bot's token is invalid.
 //   - UnexpectedResponseError: Returned if an unexpected response was received.
-func (b *Bot) FetchApplication() (*models.Application, error) {
+func (b *Bot) FetchApplicationInfo() (*ApplicationInfo, error) {
 	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/oauth2/applications/@me", nil)
 	if err != nil {
 		return nil, fmt.Errorf("error forming request: %w", err)
 	}
-	var application models.Application
+	var application ApplicationInfo
 	resp, err := b.Request(req, &application)
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %w", err)
@@ -83,143 +144,4 @@ func (b *Bot) FetchApplication() (*models.Application, error) {
 		return nil, fmt.Errorf("error unmarshaling json: %w", err)
 	}
 	return &application, nil
-}
-
-// FetchGuildPreview fetches the guild preview of the guild with the passed ID.
-//
-// Possible Errors:
-//   - ErrUnauthorized: Returned if the bot's token is invalid.
-//   - UnexpectedResponseError: Returned if an unexpected response was received.
-//   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
-func (b *Bot) FetchGuildPreview(guildID string) (*models.GuildPreview, error) {
-	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/guilds/"+guildID+"/preview", nil)
-	if err != nil {
-		return nil, fmt.Errorf("error forming request: %w", err)
-	}
-	var guildPreview models.GuildPreview
-	resp, err := b.Request(req, &guildPreview)
-	if err != nil {
-		return nil, fmt.Errorf("error making request: %w", err)
-	}
-	if resp.Status != http.StatusOK {
-		if resp.Status == http.StatusNotFound {
-			if strings.Contains(string(resp.Body), `"code": 10004`) {
-				return nil, ErrGuildNotFound
-			}
-			// Otherwise we return an unexpected error
-		}
-		return nil, &UnexpectedResponseError{response: resp}
-	}
-	return &guildPreview, nil
-}
-
-// FetchGuild fetches the guild object of the guild with the passed ID.
-//
-// Possible Errors:
-//   - ErrUnauthorized: Returned if the bot's token is invalid.
-//   - UnexpectedResponseError: Returned if an unexpected response was received.
-//   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
-func (b *Bot) FetchGuild(guildID string) (*models.Guild, error) {
-	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/guilds/"+guildID, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error forming request: %w", err)
-	}
-	var guild models.Guild
-	resp, err := b.Request(req, &guild)
-	if err != nil {
-		return nil, fmt.Errorf("error making request: %w", err)
-	}
-	if resp.Status != http.StatusOK {
-		if resp.Status == http.StatusNotFound {
-			if strings.Contains(string(resp.Body), `"code": 10004`) {
-				return nil, ErrGuildNotFound
-			}
-			// Otherwise we return an unexpected error
-		}
-		return nil, &UnexpectedResponseError{response: resp}
-	}
-	return &guild, nil
-}
-
-// FetchGuildMember feches a member based on the passed member ID. The member must be in the guild with the passed guild ID.
-//
-// Possible Errors:
-//   - ErrUnauthorized: Returned if the bot's token is invalid.
-//   - UnexpectedResponseError: Returned if an unexpected response was received.
-//   - ErrUserNotFound: Returned if a user with the passed member ID could not be found in the guild.
-//   - ErrGuildNotFound: Returned if the guild does not exist or the bot is not in the guild.
-func (b *Bot) FetchGuildMember(guildID string, memberID string) (*models.Member, error) {
-	req, err := http.NewRequest(http.MethodGet, BaseDiscordAPIURL+"/guilds/"+guildID+"/members/"+memberID, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error forming request: %w", err)
-	}
-	var member models.Member
-	resp, err := b.Request(req, &member)
-	if err != nil {
-		return nil, fmt.Errorf("error making request: %w", err)
-	}
-	if resp.Status != http.StatusOK {
-		if resp.Status == http.StatusNotFound {
-			if strings.Contains(string(resp.Body), "Unknown User") {
-				return nil, ErrUserNotFound
-			}
-			return nil, ErrGuildNotFound
-		}
-		return nil, &UnexpectedResponseError{response: resp}
-	}
-	err = json.Unmarshal(resp.Body, &member)
-	if err != nil {
-		return nil, fmt.Errorf("error unmarshaling json: %w", err)
-	}
-	return &member, nil
-}
-
-// AddMemberToGuild joins the user with the passed user ID to the guild with the passed guild ID using the access token.
-//
-// Possible Errors:
-//   - ErrUnauthorized: Returned if the bot's token is invalid.
-//   - UnexpectedResponseError: Returned if an unexpected response was received.
-//   - ErrAlreadyInGuild: Returned if the user is already in the guild.
-//   - ErrMaxServers: Returned if the user is in max servers.
-//   - ErrGuildNotFound: Returned if the bot is not in the guild.
-//   - ErrInvalidAccessToken: Returned if the access token is invalid.
-//   - ErrUserNotFound: Returned if a user with the passed member ID could not be found in the guild.
-func (b *Bot) AddMemberToGuild(accessToken string, userID string, guildID string) error {
-	body := fmt.Sprintf(`{
-		"access_token": "%s"
-	}`, accessToken)
-	req, err := http.NewRequest(http.MethodPut, BaseDiscordAPIURL+"/guilds/"+guildID+"/members/"+userID, strings.NewReader(body))
-	if err != nil {
-		return fmt.Errorf("error forming request: %w", err)
-	}
-	resp, err := b.Request(req, nil)
-	if err != nil {
-		return fmt.Errorf("error making request: %w", err)
-	}
-	if resp.Status != http.StatusCreated {
-		if resp.Status == http.StatusNoContent {
-			return ErrAlreadyInGuild
-		}
-		if resp.Status == http.StatusBadRequest {
-			return ErrMaxServers
-		}
-		if resp.Status == http.StatusNotFound {
-			if strings.Contains(string(resp.Body), "Unknown User") {
-				return ErrUserNotFound
-			}
-			return ErrGuildNotFound
-		}
-		if resp.Status == http.StatusForbidden {
-			_, err = b.FetchGuildPreview(guildID)
-			if err != nil {
-				return ErrGuildNotFound
-			}
-			if strings.Contains(string(resp.Body), `"code": 50025`) {
-				return ErrInvalidAccessToken
-			}
-			// If neither we return unexpected response.
-		}
-		return &UnexpectedResponseError{resp}
-	}
-	return nil
 }

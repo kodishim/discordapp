@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewApplication(t *testing.T) {
-	_, err := discordapp.NewApplication(os.Getenv("TEST_TOKEN"), os.Getenv("TEST_SECRET"))
+	_, err := discordapp.NewApplication(os.Getenv("TOKEN"), os.Getenv("SECRET"))
 	if err != nil {
 		t.Fatalf("Error creating new application: %s", err)
 	}
