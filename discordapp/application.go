@@ -21,7 +21,7 @@ type Application struct {
 // An application's token and secret can be found at https://discord.com/developers/applications.
 //
 // Possible Errors:
-//   - ErrUnauthorized - Returned if the passed token is invalid.
+//   - ErrUnauthorized: Returned if the passed token is invalid.
 func NewApplication(token string, secret string) (*Application, error) {
 	bot, err := NewBot(token)
 	if err != nil {
